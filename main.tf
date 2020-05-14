@@ -54,7 +54,7 @@ resource "aws_instance" "app1" {
   ami           = "ami-0470e33cd681b2476"
   instance_type = "t2.micro"
   security_groups = [ "app" ]
-  key_name = "vishnuc"
+  key_name = var.aws_ssh_key_name
   user_data = file("appuserdata.sh")
   depends_on = [aws_security_group.app]
   provisioner "local-exec" {
@@ -66,7 +66,7 @@ resource "aws_instance" "app2" {
   ami           = "ami-0470e33cd681b2476"
   instance_type = "t2.micro"
   security_groups = [ "app" ]
-  key_name = "vishnuc"
+  key_name = var.aws_ssh_key_name
   user_data = file("appuserdata.sh")
   depends_on = [aws_instance.app1]
   provisioner "local-exec" {
@@ -80,14 +80,14 @@ resource "aws_instance" "web-lb" {
   ami           = "ami-0470e33cd681b2476"
   instance_type = "t2.micro"
   security_groups = [ "web" ]
-  key_name = "vishnuc"
+  key_name = var.aws_ssh_key_name
   connection {
     host     = aws_instance.web-lb.public_dns
     type     = "ssh"
     agent    = false
     user     = "ec2-user"
     password = ""
-    private_key = file("~/Downloads/vishnuc.pem")
+    private_key = file(var.private_key_path)
     }
   provisioner "file" {
   source      = "./public_dns_list.txt"
